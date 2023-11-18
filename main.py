@@ -59,8 +59,8 @@ class MainMenu:         #for the functionalities of main screen...
         plt.show()
     def havelhakimi(self):
         hakimi()
-    def trajans(self):
-        trajan()
+    def tarjans(self):
+        tarjan()
     def DisplayMenu(self):
         self.root.geometry("900x900")
         self.root.title("Main Menu")
@@ -78,7 +78,7 @@ class MainMenu:         #for the functionalities of main screen...
         btn3 = tk.Button(self.root, text="Bipartite Graph", font=('Century Gothic', 18), command=self.bipartite, width=15, height=1)
         btn4 = tk.Button(self.root, text="Tripartite Graph", font=('Century Gothic', 18), command=self.tripartite, width=15, height=1)
         btn5 = tk.Button(self.root, text="Havel Hakimi", font=('Century Gothic', 18), command=self.havelhakimi, width=15, height=1)
-        btn6 = tk.Button(self.root, text="Trajan's Algorithm", font=('Century Gothic', 18), command=self.trajans, width=15, height=1)
+        btn6 = tk.Button(self.root, text="Tarjan's Algorithm", font=('Century Gothic', 18), command=self.tarjans, width=15, height=1)
         btn1.place(x=100, y=220)
         btn2.place(x=100, y=290)
         btn3.place(x=100, y=360)
@@ -124,19 +124,95 @@ class hakimi:
         btn1 = tk.Button(self.root, text="Graph", font=('Franklin Gothic Medium', 18), command=self.simple, width=10,height=1)
         btn1.place(x=55, y=170)
         self.root.mainloop()
-class trajan:
+class tarjan:
     def __init__(self):
         self.root = tk.Tk()
         self.display()
     def CloseWindow(self):
         self.root.destroy()
+
+    def tarjan_scc(self, graph):
+        vertices = len(graph.nodes)
+        id = 0
+        low_link = [-1] * vertices
+        id_array = [-1] * vertices
+        stack_member = [False] * vertices
+        stack = []
+        scc_result = []
+
+        def dfs(u):
+            nonlocal id
+            print(f"Visiting vertex {u}, ID: {id}, Low-link: {low_link[u]}")
+            low_link[u] = id
+            id_array[u] = id
+            id += 1
+            stack.append(u)
+            stack_member[u] = True
+
+            for v in graph.neighbors(u):
+                if id_array[v] == -1:
+                    dfs(v)
+                    low_link[u] = min(low_link[u], low_link[v])
+                    print(f"Backtracking. Updated low link value of {u} is {low_link[u]}")
+                elif stack_member[v]:
+                    low_link[u] = min(low_link[u], id_array[v])
+                    print(f"No more unvisited neighbours. Updated low link value of {u} is {low_link[u]}")
+
+            w = -1
+            if low_link[u] == id_array[u]:
+                scc = []
+                print(f"ID == lowlink. Found Strongly Connected Component with lowlink {low_link[u]} :")
+                while w != u:
+                    w = stack.pop()
+                    stack_member[w] = False
+                    scc.append(w)
+                print(scc)
+                scc_result.append(scc)
+
+        for i in range(vertices):
+            if id_array[i] == -1:
+                dfs(i)
+
+        return scc_result
+    def drawgraph(self):
+        G = nx.DiGraph()
+        G.add_edges_from([(0, 1), (2, 0), (3, 4), (4, 5), (5, 3), (14, 2), (6, 7), (7, 8), (8, 6), (0, 6), (1, 13), (13,14)])
+        G.add_edges_from([(9, 10), (10, 11), (11, 9), (11, 12), (12, 12), (1, 3), (9, 8), (1, 5), (5, 8)])
+        plt.figure(figsize=(9, 9))
+        strongly_connected_components = self.tarjan_scc(G)
+        color_map = {}
+        for i, component in enumerate(strongly_connected_components):
+            color = f'C{i}'  # Use distinct colors for each component
+            for node in component:
+                color_map[node] = color
+
+        # Draw the graph
+        pos = nx.spring_layout(G)  # You can use a different layout algorithm if needed
+        nx.draw(G, pos, node_color=[color_map[node] for node in G.nodes], with_labels=True, font_weight='bold')
+        plt.show()
     def display(self):
         self.root.geometry("900x900")
         self.root.title("Trajan's Algorithm")
         self.root.protocol("WM_DELETE_WINDOW", self.CloseWindow)
         self.root.configure(bg="lavender")
-        title_lbl = tk.Label(self.root, text="MT3001 - Graph Theory Project",font=('Franklin Gothic Medium', 25, 'bold'))
+        title_lbl = tk.Label(self.root, text="Executing Tarjan's Algorithm",font=('Franklin Gothic Medium', 25, 'bold'))
         title_lbl.config(bg="lavender", fg="Black")
         title_lbl.place(x=210, y=50)
+        # Create a directed graph
+        G = nx.DiGraph()
+        G.add_edges_from([(0, 1), (2, 0), (3, 4), (4, 5), (5, 3), (14, 2)])
+        G.add_edges_from([(6, 7), (7, 8), (8, 6), (0, 6), (1, 13), (13, 14)])
+        G.add_edges_from([(9, 10), (10, 11), (11, 9), (11, 12), (12, 12)])
+        G.add_edges_from([(1, 3), (9, 8), (1, 5), (5, 8)])
+        # Find strongly connected components
+        strongly_connected_components = self.tarjan_scc(G)
+        result = "Strongly Connected Components: \n"
+        for component in strongly_connected_components:
+            result = result + str(component) + "\n"
+        lbl = tk.Label(self.root, text=result, font=('Franklin Gothic Medium', 18))
+        lbl.config(bg="lavender", fg="Black")
+        lbl.place(x=250, y=150)
+        btn1 = tk.Button(self.root, text="Graph", font=('Franklin Gothic Medium', 18), command= self.drawgraph, width=10,height=1)
+        btn1.place(x=350, y=400)
         self.root.mainloop()
 MainMenu()
