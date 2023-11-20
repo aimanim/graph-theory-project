@@ -8,7 +8,6 @@ random_number = random.randrange(10, 25)
 simpleG = nx.gnp_random_graph(random_number, 0.3, 40)
 n1 = random.randrange(5, 10)
 n2 = random.randrange(5, 10)
-n3 = random.randrange(5, 10)
 
 def Generate_Points():                      #Function to generate random points
     points.append(Point(-2, 12))
