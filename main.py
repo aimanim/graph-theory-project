@@ -203,9 +203,9 @@ class tarjan:
             def dfs(u):
                 nonlocal id
                 nonlocal s
-                print(f"Visiting vertex {u}, ID: {id}, Low-link: {low_link[u]}")
                 low_link[u] = id
                 id_array[u] = id
+                print(f"Visiting vertex {u}, ID: {id}, Low-link: {low_link[u]}")
                 id += 1
                 stack.append(u)
                 stack_member[u] = True
