@@ -1,7 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+import time
 import random
-#from tkinter import scrolledtext
 import tkinter as tk
 
 random_number = random.randrange(10, 25)
@@ -177,7 +177,7 @@ class tarjan:
         self.screenwidth = 800
         self.root = tk.Tk()
         self.result_var = tk.BooleanVar(self.root)
-        self.simulation_speed = 1000  # Change this so that program runs faster/slower.
+        self.simulation_speed = 2500  # Change this so that program runs faster/slower.
         self.root.withdraw()
         self.tarjansalgo()
 
@@ -188,6 +188,7 @@ class tarjan:
     def tarjansalgo(self):
         c = self.InitializeWindow("Tarjan's Algorithm", "Simulation for Tarjan's algorithm")
         colors = ["light goldenrod", "springgreen2", "salmon1", "cornflower blue", "mediumorchid1"]
+        time.sleep(1)
 
         def tarjan_scc(graph):
             vertices = len(graph.nodes)
